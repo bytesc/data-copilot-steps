@@ -125,11 +125,88 @@ def execute_select(sql):
         return None
 
 
+def get_table_creation_statements():
+    inspector = inspect(engine)
+    table_names = inspector.get_table_names()
+    creation_statements = {}
+
+    for table_name in table_names:
+        # 获取表的列信息
+        columns = inspector.get_columns(table_name)
+        # 获取表的主键信息
+        primary_keys = inspector.get_pk_constraint(table_name)
+        # 获取表的外键信息
+        foreign_keys = inspector.get_foreign_keys(table_name)
+        # 获取表的索引信息
+        indexes = inspector.get_indexes(table_name)
+
+        # 开始构建建表语句
+        create_table_statement = f"CREATE TABLE {table_name} (\n"
+
+        # 添加列定义
+        column_definitions = []
+        for column in columns:
+            column_def = f"    {column['name']} {column['type']}"
+            if not column['nullable']:
+                column_def += " NOT NULL"
+            if column['default'] is not None:
+                column_def += f" DEFAULT {column['default']}"
+            column_definitions.append(column_def)
+
+        # 添加主键定义
+        if primary_keys['constrained_columns']:
+            pk_columns = ", ".join(primary_keys['constrained_columns'])
+            column_definitions.append(f"    PRIMARY KEY ({pk_columns})")
+
+        # 添加外键定义
+        for fk in foreign_keys:
+            fk_columns = ", ".join(fk['constrained_columns'])
+            referred_table = fk['referred_table']
+            referred_columns = ", ".join(fk['referred_columns'])
+            column_definitions.append(f"    FOREIGN KEY ({fk_columns}) REFERENCES {referred_table} ({referred_columns})")
+
+        # 将列定义添加到建表语句中
+        create_table_statement += ",\n".join(column_definitions)
+        create_table_statement += "\n);"
+
+        # 添加索引定义
+        for index in indexes:
+            if not index['unique']:
+                index_columns = ", ".join(index['column_names'])
+                create_table_statement += f"\nCREATE INDEX {index['name']} ON {table_name} ({index_columns});"
+            else:
+                index_columns = ", ".join(index['column_names'])
+                create_table_statement += f"\nCREATE UNIQUE INDEX {index['name']} ON {table_name} ({index_columns});"
+
+        # 将建表语句存储到字典中
+        creation_statements[table_name] = create_table_statement
+
+    return creation_statements
+
+
+def get_table_creation_statements_2():
+    creation_statements = {}
+    with engine.connect() as connection:
+        # 获取所有表名
+        table_names = inspect(engine).get_table_names()
+        for table_name in table_names:
+            # 使用 SHOW CREATE TABLE 获取建表语句
+            query = text(f"SHOW CREATE TABLE {table_name}")
+            result = connection.execute(query).fetchone()
+            if result:
+                # 结果中的第二列是建表语句
+                create_table_statement = result[1]
+                creation_statements[table_name] = create_table_statement
+    return creation_statements
+
+
 if __name__ == "__main__":
-    data = get_data_from_db()
-    print(type(data), "\n")
-    print(data[2][1])
+    # data = get_data_from_db()
+    # print(type(data), "\n")
+    # print(data[2][1])
     print("###########################################\n\n")
+    print(get_table_creation_statements())
+
     # for table_name, table_df in mdata.items():
     #     print(f"Table: {table_name}")
     #     print(table_df)
