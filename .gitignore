@@ -1,0 +1,14 @@
+.idea
+__pycache__/
+
+*.log
+llm_access/api_key_qwen.txt
+llm_access/api_key_openai.txt
+output_img/
+cache/
+exports/
+tmp_imgs/*.png
+tmp_imgs/*.html
+
+temp.png
+temp.html
