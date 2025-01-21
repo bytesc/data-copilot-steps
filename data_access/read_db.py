@@ -7,6 +7,11 @@ from data_access.db_conn import engine
 tables_data = None
 
 
+def get_all_table_names():
+    inspector = inspect(engine)
+    return inspector.get_table_names()
+
+
 def get_foreign_keys():
     inspector = inspect(engine)
     foreign_keys = {}
@@ -111,7 +116,7 @@ def execute_sql(sql):
             connection.rollback()
             # 打印错误信息
             print(f"An error occurred: {e}")
-            return None
+            return e
 
 
 def execute_select(sql):
@@ -122,7 +127,7 @@ def execute_select(sql):
     except SQLAlchemyError as e:
         # 如果发生错误，打印错误信息
         print(f"An error occurred: {e}")
-        return None
+        return e
 
 
 def get_table_creation_statements():

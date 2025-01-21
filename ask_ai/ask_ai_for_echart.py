@@ -27,6 +27,7 @@ def get_ask_echart_block_prompt(req):
             # generate code to perform operations here
 
             html_string = chart.render_notebook().data # this returns a html string
+            # do not use render_embed(), please use render_notebook() !!!
             return html_string
         ```
         """

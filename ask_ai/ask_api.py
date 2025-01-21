@@ -49,16 +49,20 @@ def get_final_prompt(data, question):
     return all_prompt
 
 
+from utils.exe.code_executor import execute_code
+
+
 def ask_py(data, question, llm, assert_func, retries=0):
     all_prompt = get_final_prompt(data, question)
     retries_times = 0
     error_msg = ""
     wrong_code = ""
+    ans_code = ""
+
     while retries_times <= retries:
         retries_times += 1
 
         ans = call_llm_test.call_llm(all_prompt + wrong_code + error_msg, llm)
-
         ans_code = parse_output.parse_generated_code(ans.content)
 
         print(f"\n {time.time()} \nxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx \n retries_times:{retries_times} \n")
@@ -67,19 +71,13 @@ def ask_py(data, question, llm, assert_func, retries=0):
 
         if ans_code:
             try:
-                local_namespace = {'data': data, 'result': None}
-                exec(ans_code, globals(), local_namespace)
-                result = local_namespace['process_data'](data)
-                assert_result = assert_func(result)
-                if assert_result:
-                    raise Exception(assert_result)
-                return result, retries_times-1, all_prompt
+                result = execute_code(ans_code, data, assert_func)
+                return result, retries_times - 1, all_prompt, ans_code
             except Exception as e:
                 wrong_code = "the code was executed: ```python\n" + ans_code + "\n```"
-                error_msg = "the code raise Exception:" + type(e).__name__+': '+str(e) + """
+                error_msg = "the code raise Exception:" + type(e).__name__ + ': ' + str(e) + """
                     please regenerate all the complete code again based on the above information. """
                 print(f"An error occurred while executing the code: \n {type(e).__name__ + ': ' + str(e)}")
-
         else:
             error_msg = """code should only be in md code blocks: 
             ```python
@@ -90,4 +88,4 @@ def ask_py(data, question, llm, assert_func, retries=0):
             print("No code was generated.")
 
     logging.error(all_prompt + wrong_code + error_msg)
-    return None, retries_times-1, all_prompt
+    return None, retries_times - 1, all_prompt, ans_code
