@@ -12,7 +12,7 @@ def get_all_table_names():
     return inspector.get_table_names()
 
 
-def get_first_five_rows_from_all_tables():
+def get_rows_from_all_tables(num=5):
     # 获取所有表名
     inspector = inspect(engine)
     table_names = inspector.get_table_names()
@@ -24,7 +24,7 @@ def get_first_five_rows_from_all_tables():
     for table_name in table_names:
         try:
             # 构造查询语句，限制返回5行
-            query = text(f"SELECT * FROM {table_name} LIMIT 5")
+            query = text(f"SELECT * FROM {table_name} LIMIT {num}")
 
             # 使用 pandas 读取查询结果
             with engine.connect() as connection:

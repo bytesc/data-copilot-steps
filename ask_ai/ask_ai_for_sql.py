@@ -1,4 +1,4 @@
-from data_access.read_db import get_table_creation_statements
+from data_access.read_db import get_table_creation_statements, get_rows_from_all_tables
 from llm_access.call_llm_test import call_llm
 from utils.output_parsing.parse_output import parse_sql_code
 
@@ -11,7 +11,9 @@ def get_sql_code(question, llm, retries=3):
         retries_times += 1
         ans = call_llm(question + "please write sql to select the data needed, "
                                   "here is the structure of the database:"
-                       + str(table_struct) + """
+                       + str(table_struct)
+                       + "here is data samples(just samples, do not mock any data):" +
+                       str(get_rows_from_all_tables(num=3)) + """
                               code should only be in md code blocks: 
                                 ```sql
                                     # some sql code

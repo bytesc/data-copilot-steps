@@ -9,7 +9,7 @@ from ask_ai.ask_ai_for_graph import get_ask_graph_prompt
 from ask_ai.ask_ai_for_sql import get_sql_code
 from ask_ai.ask_api import ask_py, get_final_prompt, get_py_code
 from ask_ai.input_process import get_chart_type
-from data_access.read_db import execute_select, get_all_table_names, get_first_five_rows_from_all_tables
+from data_access.read_db import execute_select, get_all_table_names, get_rows_from_all_tables
 from llm_access import call_llm_test
 from llm_access.LLM import get_llm
 from llm_access.call_llm_test import call_llm
@@ -17,7 +17,7 @@ from utils.exe.code_executor import execute_code
 from utils.output_parsing import parse_output
 
 from pywebio.input import input, TEXT, actions, textarea
-from pywebio.output import put_html, put_text, put_table, put_markdown, put_image, put_code, put_loading
+from pywebio.output import put_html, put_text, put_table, put_markdown, put_image, put_code, put_loading, put_collapse
 from pywebio import start_server
 
 
@@ -54,14 +54,16 @@ def main():
     put_markdown("# DATA COPILOT")
 
     table_names = get_all_table_names()
-    put_text("数据库：")
-    put_table([table_names])
+    # put_text("数据库：")
+    # put_table([table_names])
 
-    first_five_rows = get_first_five_rows_from_all_tables()
+    first_five_rows = get_rows_from_all_tables()
     # print(first_five_rows)
-    for table_name, rows in first_five_rows.items():
-        put_text(f"表 {table_name} 的前5行数据:")
-        put_table([rows.columns.tolist()] + rows.values.tolist())
+    with put_collapse(f"数据表："):
+        for table_name, rows in first_five_rows.items():
+            with put_collapse(f"表 {table_name}"):
+                put_text(f"表 {table_name} 的前5行数据:")
+                put_table([rows.columns.tolist()] + rows.values.tolist())
 
     while 1:
         question = input("请输入你的问题：", type=TEXT, required=True)
@@ -91,7 +93,7 @@ def main():
                            </div>
                            """
                     put_html(html)
-                else:
+                elif not ans_pd.empty:
                     put_table(ans_pd.to_dict('records'))
                 # 让用户选择是否接受结果或重新查询
                 user_choice = actions("请选择：", [
