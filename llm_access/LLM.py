@@ -3,6 +3,8 @@ import dashscope
 from config.get_config import config_data
 from llm_access import get_api
 
+from openai import OpenAI
+
 
 def get_llm():
     model_provider = config_data['llm']['model_provider']
@@ -25,12 +27,6 @@ def get_llm():
         # llm = HuggingFacePipeline(pipeline=pipe)
 
     else:
-        from langchain_openai import ChatOpenAI
-
-        llm = ChatOpenAI(
-            temperature=0.95,
-            model=config_data['llm']['model'],
-            openai_api_key=get_api.get_api_key_from_file("./llm_access/api_key_openai.txt"),
-            openai_api_base=config_data['llm']['url'],
-        )
+        llm = OpenAI(api_key=get_api.get_api_key_from_file("./llm_access/api_key_openai.txt"),
+                     base_url=config_data['llm']['url'])
     return llm

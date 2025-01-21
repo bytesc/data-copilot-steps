@@ -1,17 +1,14 @@
-from langchain.chains.llm import LLMChain
-from langchain_core.prompts import PromptTemplate
-# pip install -U langchain-community
-from langchain.chains import LLMChain
-from langchain.prompts import PromptTemplate
-# pip install dashscope
-
-from langchain.globals import set_llm_cache
-
-set_llm_cache(None)
+from config.get_config import config_data
 
 
 def call_llm(question, llm):
-    prompt = PromptTemplate(template="{question}", input_variables=["question"])
-    llm_chain = prompt | llm
-    ans = llm_chain.invoke(question)
-    return ans
+    response = llm.chat.completions.create(
+        model=config_data['llm']['model'],
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant"},
+            {"role": "user", "content": question},
+        ],
+        stream=False
+    )
+
+    return response.choices[0].message
