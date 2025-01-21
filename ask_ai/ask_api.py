@@ -93,7 +93,7 @@ def ask_py(data, question, llm, assert_func, retries=0):
     return None, retries_times - 1, all_prompt, ans_code
 
 
-def get_ans_code(final_prompt, llm, retries=3):
+def get_py_code(final_prompt, llm, retries=3):
     retries_times = 0
     error_msg = ""
     while retries_times <= retries:

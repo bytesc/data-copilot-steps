@@ -7,9 +7,9 @@ from sqlalchemy.exc import SQLAlchemyError
 from ask_ai.ask_ai_for_echart import get_ask_echart_file_prompt, get_ask_echart_block_prompt
 from ask_ai.ask_ai_for_graph import get_ask_graph_prompt
 from ask_ai.ask_ai_for_sql import get_sql_code
-from ask_ai.ask_api import ask_py, get_final_prompt, get_ans_code
+from ask_ai.ask_api import ask_py, get_final_prompt, get_py_code
 from ask_ai.input_process import get_chart_type
-from data_access.read_db import execute_select, get_all_table_names
+from data_access.read_db import execute_select, get_all_table_names, get_first_five_rows_from_all_tables
 from llm_access import call_llm_test
 from llm_access.LLM import get_llm
 from llm_access.call_llm_test import call_llm
@@ -57,8 +57,14 @@ def main():
     put_text("数据库：")
     put_table([table_names])
 
+    first_five_rows = get_first_five_rows_from_all_tables()
+    # print(first_five_rows)
+    for table_name, rows in first_five_rows.items():
+        put_text(f"表 {table_name} 的前5行数据:")
+        put_table([rows.columns.tolist()] + rows.values.tolist())
+
     while 1:
-        question = input("请输入你的问题：", type=TEXT)
+        question = input("请输入你的问题：", type=TEXT, required=True)
         ask_request = AskRequest(question=question, concurrent=1, retries=3)
         put_text("你的问题："+question)
 
@@ -69,13 +75,13 @@ def main():
         # put_text(sql_code)
 
         while 1:
-            edited_sql = textarea("请编辑 SQL 代码并确认执行：", value=sql_code, rows=10, code=True)
+            sql_code = textarea("请编辑 SQL 代码并确认执行：", value=sql_code, rows=10, code=True)
             put_text("执行 SQL 代码：")
-            put_code(edited_sql, language="sql")
+            put_code(sql_code, language="sql")
 
             # 执行 SQL 查询
             with put_loading():
-                ans_pd = execute_select(edited_sql)
+                ans_pd = execute_select(sql_code)
             if isinstance(ans_pd, pd.DataFrame):
                 put_text("查询结果：")
                 if len(ans_pd) > 20:
@@ -99,7 +105,7 @@ def main():
                 elif user_choice == 'retry':
                     continue  # 用户选择重新编辑 SQL 代码
                 elif user_choice == 'regen':
-                    mid_notes = textarea("请输入你的问题（如要修改）：", value=ask_request.question, type=TEXT)
+                    mid_notes = textarea("请输入补充提示（如果需要）：", type=TEXT)
                     with put_loading():
                         sql_code = get_sql_code(ask_request.question + mid_notes, llm)
                     continue
@@ -140,13 +146,13 @@ def main():
 
         final_prompt = get_final_prompt(ans_pd, ask_request.question + pre_prompt)
         with put_loading():
-            ans_code = get_ans_code(final_prompt, llm)
+            ans_code = get_py_code(final_prompt, llm)
 
         while 1:
-            edited_code = textarea("请编辑代码：", value=ans_code, rows=10, code=True)
+            ans_code = textarea("请编辑代码：", value=ans_code, rows=10, code=True)
             put_code(ans_code, language="python")
             try:
-                result = execute_code(edited_code, ans_pd)
+                result = execute_code(ans_code, ans_pd)
                 put_html(result)
             except Exception as e:
                 put_text(f"代码执行失败，错误信息：{str(e)}")
@@ -160,9 +166,9 @@ def main():
             elif user_choice == 'retry':
                 continue
             elif user_choice == 'regen':
-                mid_notes = textarea("请输入你的问题（如要修改）：", value=ask_request.question, type=TEXT)
+                mid_notes = textarea("请输入补充提示（如果需要）：", type=TEXT)
                 with put_loading():
-                    ans_code = get_ans_code(final_prompt + mid_notes, llm)
+                    ans_code = get_py_code(final_prompt + mid_notes, llm)
                 continue
 
 

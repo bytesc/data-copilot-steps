@@ -12,6 +12,34 @@ def get_all_table_names():
     return inspector.get_table_names()
 
 
+def get_first_five_rows_from_all_tables():
+    # 获取所有表名
+    inspector = inspect(engine)
+    table_names = inspector.get_table_names()
+
+    # 准备一个字典来存储每个表的前5行数据
+    first_five_rows = {}
+
+    # 遍历所有表名
+    for table_name in table_names:
+        try:
+            # 构造查询语句，限制返回5行
+            query = text(f"SELECT * FROM {table_name} LIMIT 5")
+
+            # 使用 pandas 读取查询结果
+            with engine.connect() as connection:
+                df = pd.read_sql(query, connection)
+
+            # 将结果存储到字典中
+            first_five_rows[table_name] = df
+
+        except SQLAlchemyError as e:
+            # 如果发生错误，打印错误信息并继续处理下一个表
+            print(f"An error occurred while fetching data from table {table_name}: {e}")
+            continue
+
+    return first_five_rows
+
 def get_foreign_keys():
     inspector = inspect(engine)
     foreign_keys = {}
