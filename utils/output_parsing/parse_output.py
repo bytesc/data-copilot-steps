@@ -89,3 +89,7 @@ def assert_str(obj):
     except Exception as e:
         return str(e)
     return None
+
+
+def assert_skip(txt):
+    return None

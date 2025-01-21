@@ -1,7 +1,9 @@
 import logging
 
+from utils.output_parsing import parse_output
 
-def execute_code(code, data, assert_func):
+
+def execute_code(code, data, assert_func=parse_output.assert_skip):
     """
     执行生成的代码并返回结果。
 

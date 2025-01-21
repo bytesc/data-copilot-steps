@@ -22,5 +22,4 @@ def get_chart_type(question, llm):
     return ", please draw " + graph_type.content
 
 
-if __name__ == "__main__":
-    print(get_chart_type("几位同事的工资对比"))
+

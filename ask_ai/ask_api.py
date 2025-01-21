@@ -27,6 +27,8 @@ def get_final_prompt(data, question):
     """
 
     data_prompt = """
+    This data had been processed, you just need to draw graph based on the given data, 
+    do not make any changes or calculation !!!.
     Here is the dataframe dict sample(it is just data structure samples not real data): 
     """
 
@@ -89,3 +91,23 @@ def ask_py(data, question, llm, assert_func, retries=0):
 
     logging.error(all_prompt + wrong_code + error_msg)
     return None, retries_times - 1, all_prompt, ans_code
+
+
+def get_ans_code(final_prompt, llm, retries=3):
+    retries_times = 0
+    error_msg = ""
+    while retries_times <= retries:
+        retries_times += 1
+        ans = call_llm_test.call_llm(final_prompt + error_msg, llm)
+        ans_code = parse_output.parse_generated_code(ans.content)
+        if ans_code is not None:
+            return ans_code
+        else:
+            error_msg = """code should only be in md code blocks: 
+            ```python
+                # some python code
+            ```
+            without any additional comments, explanations or cmds !!!"""
+            logging.error(ans + "No code was generated.")
+            print("No code was generated.")
+            continue
