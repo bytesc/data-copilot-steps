@@ -1,11 +1,3 @@
-import concurrent
-
-from config.get_config import config_data
-from ask_ai import ask_api
-
-import pandas as pd
-from utils.output_parsing import parse_output
-
 
 def get_ask_pd_prompt(req):
     question = req.question
