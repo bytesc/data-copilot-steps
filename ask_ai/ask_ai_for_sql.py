@@ -17,8 +17,6 @@ def get_sql_code(question, llm, retries=3):
                        + str(get_table_creation_statements())
                        + "Here is the table and column comments:\n"
                        + str(get_table_and_column_comments())
-                       # + "Here is the foreign keys:\n"
-                       # + str(get_foreign_keys())
                        + "Here is data samples(just samples, do not mock any data):\n"
                        + str(get_rows_from_all_tables(num=3))
                        + """

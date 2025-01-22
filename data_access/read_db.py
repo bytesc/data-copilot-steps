@@ -191,6 +191,9 @@ def get_table_creation_statements():
                 column_def += " NOT NULL"
             if column['default'] is not None:
                 column_def += f" DEFAULT {column['default']}"
+            # # 添加列的注释
+            # if 'comment' in column and column['comment']:
+            #     column_def += f" COMMENT '{column['comment']}'"
             column_definitions.append(column_def)
 
         # 添加主键定义
@@ -209,14 +212,14 @@ def get_table_creation_statements():
         create_table_statement += ",\n".join(column_definitions)
         create_table_statement += "\n);"
 
-        # 添加索引定义
-        for index in indexes:
-            if not index['unique']:
-                index_columns = ", ".join(index['column_names'])
-                create_table_statement += f"\nCREATE INDEX {index['name']} ON {table_name} ({index_columns});"
-            else:
-                index_columns = ", ".join(index['column_names'])
-                create_table_statement += f"\nCREATE UNIQUE INDEX {index['name']} ON {table_name} ({index_columns});"
+        # # 添加索引定义
+        # for index in indexes:
+        #     if not index['unique']:
+        #         index_columns = ", ".join(index['column_names'])
+        #         create_table_statement += f"\nCREATE INDEX {index['name']} ON {table_name} ({index_columns});"
+        #     else:
+        #         index_columns = ", ".join(index['column_names'])
+        #         create_table_statement += f"\nCREATE UNIQUE INDEX {index['name']} ON {table_name} ({index_columns});"
 
         # 将建表语句存储到字典中
         creation_statements[table_name] = create_table_statement
