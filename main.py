@@ -86,37 +86,47 @@ def main():
                 ans_pd = execute_select(sql_code)
             if isinstance(ans_pd, pd.DataFrame):
                 put_text("查询结果：")
-                if len(ans_pd) > 20:
+                if len(ans_pd) > 100:
+                    put_text("数据超过100行，仅显示前100行")
+                    ans_pd = ans_pd.head(100)
+                if not ans_pd.empty:
                     html = f"""
-                           <div style="height: 400px; overflow-y: auto;">
+                           <div style="height: 500px; overflow-y: auto;">
                                {ans_pd.to_html(index=False)}
                            </div>
                            """
                     put_html(html)
-                elif not ans_pd.empty:
-                    put_table(ans_pd.to_dict('records'))
-                # 让用户选择是否接受结果或重新查询
-                user_choice = actions("请选择：", [
-                    {'label': '继续', 'value': 'accept', "color": "success"},
-                    {'label': '重新编辑 SQL', 'value': 'retry'},
-                    {'label': '重新生成 SQL', 'value': 'regen'}
-                ])
-
-                if user_choice == 'accept':
-                    break  # 用户接受结果，跳出循环
-                elif user_choice == 'retry':
-                    continue  # 用户选择重新编辑 SQL 代码
-                elif user_choice == 'regen':
-                    mid_notes = textarea("请输入补充提示（如果需要）：", type=TEXT)
-                    with put_loading():
-                        sql_code = get_sql_code(ask_request.question + mid_notes, llm)
-                    continue
+                else:
+                    put_text("查询结果为空")
             elif isinstance(ans_pd, SQLAlchemyError):
                 put_text(f"查询失败，错误类型：{type(ans_pd).__name__}，错误信息：{str(ans_pd)}")
                 put_text("请重新编辑 SQL 代码。")
             else:
                 put_text("未知错误，查询失败。")
                 put_text("请重新编辑 SQL 代码。")
+
+            # 让用户选择是否接受结果或重新查询
+            if isinstance(ans_pd, pd.DataFrame) and not ans_pd.empty:
+                user_choice = actions("请选择：", [
+                    {'label': '继续', 'value': 'accept', "color": "success"},
+                    {'label': '重新编辑 SQL', 'value': 'retry'},
+                    {'label': '重新生成 SQL', 'value': 'regen'}
+                ])
+            else:
+                user_choice = actions("请选择：", [
+                    {'label': '重新编辑 SQL', 'value': 'retry'},
+                    {'label': '重新生成 SQL', 'value': 'regen'}
+                ])
+
+            if user_choice == 'accept':
+                break  # 用户接受结果，跳出循环
+            elif user_choice == 'retry':
+                continue  # 用户选择重新编辑 SQL 代码
+            elif user_choice == 'regen':
+                mid_notes = textarea("请输入补充提示（如果需要）：", type=TEXT)
+                with put_loading():
+                    sql_code = get_sql_code(ask_request.question + mid_notes, llm)
+                continue
 
         # 获取图表类型
         with put_loading():

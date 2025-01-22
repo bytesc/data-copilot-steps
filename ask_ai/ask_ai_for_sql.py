@@ -7,9 +7,9 @@ from utils.output_parsing.parse_output import parse_sql_code
 def get_sql_code(question, llm, retries=3):
     retries_times = 0
     result_sql = None
-    print(get_table_creation_statements())
-    print(get_table_and_column_comments())
-    print(get_foreign_keys())
+    # print(get_table_creation_statements())
+    # print(get_table_and_column_comments())
+    # print(get_foreign_keys())
     while retries_times <= retries:
         retries_times += 1
         ans = call_llm(question + "Please write sql to select the data needed, "
@@ -17,8 +17,8 @@ def get_sql_code(question, llm, retries=3):
                        + str(get_table_creation_statements())
                        + "Here is the table and column comments:\n"
                        + str(get_table_and_column_comments())
-                       + "Here is the foreign keys:\n"
-                       + str(get_foreign_keys())
+                       # + "Here is the foreign keys:\n"
+                       # + str(get_foreign_keys())
                        + "Here is data samples(just samples, do not mock any data):\n"
                        + str(get_rows_from_all_tables(num=3))
                        + """
