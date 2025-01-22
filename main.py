@@ -18,7 +18,8 @@ from utils.exe.code_executor import execute_code
 from utils.output_parsing import parse_output
 
 from pywebio.input import input, TEXT, actions, textarea
-from pywebio.output import put_html, put_text, put_table, put_markdown, put_image, put_code, put_loading, put_collapse
+from pywebio.output import put_html, put_text, put_table, put_markdown, put_image, put_code, put_loading, put_collapse, \
+    toast, put_info
 from pywebio import start_server
 
 
@@ -33,6 +34,10 @@ llm = get_llm()
 
 def main():
     put_markdown("# DATA COPILOT")
+    # put_info("示例问题：\n"
+    #          "统计房价数据最多的10个区的数据数量比例\n"
+    #          "统计平均房价最高的三个区域的平均房价变化情况，2000-2020\n"
+    #          "列出距离LORONG 7 TOA PAYOH最近的5个车站的名字和距离")
 
     table_names = get_all_table_names()
     # put_text("数据库：")
@@ -49,7 +54,7 @@ def main():
     while 1:
         question = textarea("请输入你的问题：", required=True)
         ask_request = AskRequest(question=question, concurrent=1, retries=3)
-        put_text("你的问题："+question)
+        put_text("你的问题：" + question)
 
         # 生成 SQL 代码
         with put_loading():

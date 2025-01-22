@@ -8,10 +8,13 @@ Pywebio 交互式前端网页，不必须 openai api，100%纯 Python 代码。
 
 🚩[English Readme](./README.en.md)
 
+[📺项目在线演示连接](http://www.bytesc.top:8037/) 
+
 ### 相关项目
 - [基于大语言模型 (LLM)和并发预测模型的自然语言数据库查询系统 (RAG) (https://github.com/bytesc/data-copilot-v2](https://github.com/bytesc/data-copilot-v2)
 
 [个人网站：www.bytesc.top](http://www.bytesc.top) 
+
 
 🔔 如有项目相关问题，欢迎在本项目提出`issue`，我一般会在 24 小时内回复。
 
@@ -115,6 +118,10 @@ LLM 智能生成绘图的 python 代码
 
 自动绘图
 ![](./readme_img/img5.png)
+
+![](./readme_img/imga.png)
+![](./readme_img/imgb.png)
+![](./readme_img/imgc.png)
 
 # 开源许可证
 
