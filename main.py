@@ -30,26 +30,6 @@ class AskRequest(BaseModel):
 
 llm = get_llm()
 
-# test_ask_request = AskRequest(
-#     question="统计价格平均房价最高的10个不同区域的房价占比",
-#     concurrent=1,
-#     retries=3
-# )
-
-# print(get_all_table_names())
-#
-# sql_code = get_sql_code(test_ask_request.question, llm)
-#
-# ans_pd = execute_select(sql_code)
-#
-# graph_type = get_chart_type(test_ask_request.question, llm)
-# test_ask_request.question = test_ask_request.question + graph_type
-#
-# result = ask_py(ans_pd, get_ask_echart_file_prompt(test_ask_request),
-#                 llm, parse_output.assert_html_file, test_ask_request.retries)
-#
-# print(result)
-
 
 def main():
     put_markdown("# DATA COPILOT")
