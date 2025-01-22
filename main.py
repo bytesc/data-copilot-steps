@@ -91,13 +91,13 @@ def main():
                     ans_pd = ans_pd.head(100)
                 if not ans_pd.empty:
                     html = f"""
-                           <div style="height: 500px; overflow-y: auto;">
+                           <div style="min-height: 200px; max-height: 400px; overflow-y: auto;">
                                {ans_pd.to_html(index=False)}
                            </div>
                            """
                     put_html(html)
                 else:
-                    put_text("查询结果为空")
+                    put_text("查询结果为空\n")
             elif isinstance(ans_pd, SQLAlchemyError):
                 put_text(f"查询失败，错误类型：{type(ans_pd).__name__}，错误信息：{str(ans_pd)}")
                 put_text("请重新编辑 SQL 代码。")
