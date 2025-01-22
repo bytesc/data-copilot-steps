@@ -15,7 +15,7 @@ def execute_code(code, data, assert_func=parse_output.assert_skip):
     try:
         local_namespace = {'data': data, 'result': None}
         exec(code, globals(), local_namespace)
-        result = local_namespace['process_data'](data)
+        result = local_namespace['draw_graph'](data)
         assert_result = assert_func(result)
         if assert_result:
             raise Exception(assert_result)

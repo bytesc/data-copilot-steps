@@ -12,7 +12,7 @@ def get_sql_code(question, llm, retries=3):
     # print(get_foreign_keys())
     while retries_times <= retries:
         retries_times += 1
-        ans = call_llm(question + "Please write sql to select the data needed, "
+        ans = call_llm(question + "\nPlease write sql to select the data needed, "
                                 + "Here is the structure of the database:\n"
                        + str(get_table_creation_statements())
                        + "Here is the table and column comments:\n"

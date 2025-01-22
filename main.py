@@ -7,7 +7,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from ask_ai.ask_ai_for_echart import get_ask_echart_file_prompt, get_ask_echart_block_prompt
 from ask_ai.ask_ai_for_graph import get_ask_graph_prompt
 from ask_ai.ask_ai_for_sql import get_sql_code
-from ask_ai.ask_api import ask_py, get_final_prompt, get_py_code
+from ask_ai.ask_python import get_final_prompt, get_py_code
 from ask_ai.input_process import get_chart_type
 from data_access.read_db import execute_select, get_all_table_names, get_rows_from_all_tables
 from llm_access import call_llm_test
@@ -128,6 +128,8 @@ def main():
                     sql_code = get_sql_code(ask_request.question + mid_notes, llm)
                 continue
 
+        print(ans_pd)
+
         # 获取图表类型
         with put_loading():
             graph_type = get_chart_type(ask_request.question, llm)
@@ -137,28 +139,10 @@ def main():
 
         ask_request.question = ask_request.question + graph_type
 
-        pre_prompt = get_ask_echart_block_prompt(ask_request)
+        graph_prompt = get_ask_echart_block_prompt(ask_request)
 
-        # 生成图表
-        # result = ask_py(ans_pd, ask_request.question+pre_prompt,
-        #                 llm, parse_output.assert_skip, ask_request.retries)
-        # print(result)
-        # if result[0] is None:
-        #     while 1:
-        #         edited_code = textarea("请编辑代码并重新执行：", value=result[4], rows=10, code=True)
-        #         put_text(result[4])
-        #         try:
-        #             result[0] = execute_code(edited_code, ans_pd, parse_output.assert_str)
-        #             put_html(result[0])
-        #             break
-        #         except Exception as e:
-        #             put_text(f"代码执行失败，错误信息：{str(e)}")
-        # else:
-        #     put_html(result[0])
-
-        final_prompt = get_final_prompt(ans_pd, ask_request.question + pre_prompt)
         with put_loading():
-            ans_code = get_py_code(final_prompt, llm)
+            ans_code = get_py_code(ans_pd, ask_request.question + graph_prompt, llm)
 
         while 1:
             ans_code = textarea("请编辑代码：", value=ans_code, rows=10, code=True)
@@ -180,7 +164,7 @@ def main():
             elif user_choice == 'regen':
                 mid_notes = textarea("请输入补充提示（如果需要）：", type=TEXT)
                 with put_loading():
-                    ans_code = get_py_code(final_prompt + mid_notes, llm)
+                    ans_code = get_py_code(ans_pd, ask_request.question + graph_prompt + mid_notes, llm)
                 continue
 
 

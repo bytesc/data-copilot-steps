@@ -7,12 +7,14 @@ def get_ask_echart_block_prompt(req):
     graph_type = """
         use pyecharts 2.0. the Python function should only return a string of html. do not save it.
         no graph title no set theme! no theme! no theme ! 
+        X label should be converted to str instead of int or float !!!
+        X label should be converted to str instead of int or float !!!
         """
 
     example_code = """
         here is an example: 
         ```python
-        def process_data(dataframe):
+        def draw_graph(dataframe):
             import pandas as pd
             import math
             from pyecharts import #
@@ -38,7 +40,7 @@ def get_ask_echart_file_prompt(req, tmp_file=False):
     example_code = """
             here is an example: 
             ```python
-            def process_data(dataframe):
+            def draw_graph(dataframe):
                 import pandas as pd
                 import math
                 from pyecharts import #

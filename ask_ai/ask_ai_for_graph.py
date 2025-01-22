@@ -13,7 +13,7 @@ def get_ask_graph_prompt(req, tmp_file=False):
     example_code = """
         here is an example: 
         ```python
-        def process_data(dataframes_dict):
+        def draw_graph(dataframes_dict):
             import pandas as pd
             import math
             import matplotlib.pyplot as plt
