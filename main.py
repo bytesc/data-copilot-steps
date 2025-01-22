@@ -66,7 +66,7 @@ def main():
                 put_table([rows.columns.tolist()] + rows.values.tolist())
 
     while 1:
-        question = input("请输入你的问题：", type=TEXT, required=True)
+        question = textarea("请输入你的问题：", required=True)
         ask_request = AskRequest(question=question, concurrent=1, retries=3)
         put_text("你的问题："+question)
 

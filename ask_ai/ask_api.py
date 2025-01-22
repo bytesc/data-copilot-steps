@@ -32,10 +32,6 @@ def get_final_prompt(data, question):
     Here is the dataframe dict sample(it is just data structure samples not real data): 
     """
 
-    comment_prompt = """
-    Here is comments of the data:
-    """
-
     end_prompt = """
     code should be completed in a single md code blocks without any comments, explanations or cmds.
     no comments no # no explanations no cmds.

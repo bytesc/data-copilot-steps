@@ -40,6 +40,7 @@ def get_rows_from_all_tables(num=5):
 
     return first_five_rows
 
+
 def get_foreign_keys():
     inspector = inspect(engine)
     foreign_keys = {}
@@ -60,13 +61,19 @@ def get_table_and_column_comments():
     table_comments = {}
     column_comments = {}
     table_names = inspector.get_table_names()
+
     for table_name in table_names:
         table_comment = inspector.get_table_comment(table_name)
-        table_comments[table_name] = table_comment['text']
+        if table_comment['text'] is not None:
+            table_comments[table_name] = table_comment['text']
         columns = inspector.get_columns(table_name)
         column_comments[table_name] = {}
         for column in columns:
-            column_comments[table_name][column['name']] = column['comment']
+            if column['comment'] is not None:
+                column_comments[table_name][column['name']] = column['comment']
+        if not column_comments[table_name]:
+            del column_comments[table_name]
+    table_comments = {k: v for k, v in table_comments.items() if v is not None}
     return [table_comments, column_comments]
 
 
