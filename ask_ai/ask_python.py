@@ -4,12 +4,9 @@ from utils.output_parsing import parse_output
 from config.get_config import config_data
 
 data_rows = config_data['ai']['data_rows']
+tries = config_data['ai']['tries']
 
-import time
 import logging
-
-import traceback
-
 import pandas as pd
 pd.set_option('display.max_columns', None)
 
@@ -49,7 +46,7 @@ def get_final_prompt(data, question):
     return all_prompt
 
 
-def get_py_code(data, question, llm, retries=3):
+def get_py_code(data, question, llm, retries=tries):
     final_prompt = get_final_prompt(data, question)
     retries_times = 0
     error_msg = ""

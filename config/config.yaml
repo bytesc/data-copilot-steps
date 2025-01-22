@@ -2,8 +2,7 @@ mysql: mysql+pymysql://root:123456@127.0.0.1/singapore_land
 # classicmodels data_copilot
 
 ai:
-  tries: 1
-  wait: 100
+  tries: 3
   data_rows: 2
 
 llm:

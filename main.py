@@ -9,6 +9,7 @@ from ask_ai.ask_ai_for_graph import get_ask_graph_prompt
 from ask_ai.ask_ai_for_sql import get_sql_code
 from ask_ai.ask_python import get_final_prompt, get_py_code
 from ask_ai.input_process import get_chart_type
+from config.get_config import config_data
 from data_access.read_db import execute_select, get_all_table_names, get_rows_from_all_tables
 from llm_access import call_llm_test
 from llm_access.LLM import get_llm
@@ -128,7 +129,7 @@ def main():
                     sql_code = get_sql_code(ask_request.question + mid_notes, llm)
                 continue
 
-        print(ans_pd)
+        # print(ans_pd)
 
         # 获取图表类型
         with put_loading():
@@ -169,4 +170,4 @@ def main():
 
 
 if __name__ == '__main__':
-    start_server(main, port=8080)
+    start_server(main, port=config_data["server_port"])
