@@ -66,6 +66,7 @@ def main():
             sql_code = textarea("请编辑 SQL 代码并确认执行：", value=sql_code, rows=10, code=True)
             put_text("执行 SQL 代码：")
             put_code(sql_code, language="sql")
+            mid_notes = ""
 
             # 执行 SQL 查询
             with put_loading():
@@ -86,10 +87,9 @@ def main():
                     put_text("查询结果为空\n")
             elif isinstance(ans_pd, SQLAlchemyError):
                 put_text(f"查询失败，错误类型：{type(ans_pd).__name__}，错误信息：{str(ans_pd)}")
-                put_text("请重新编辑 SQL 代码。")
+                mid_notes = "Code:\n```sql\n" + sql_code + "\n```\nError: " + str(ans_pd)
             else:
                 put_text("未知错误，查询失败。")
-                put_text("请重新编辑 SQL 代码。")
 
             # 让用户选择是否接受结果或重新查询
             if isinstance(ans_pd, pd.DataFrame) and not ans_pd.empty:
@@ -109,7 +109,7 @@ def main():
             elif user_choice == 'retry':
                 continue  # 用户选择重新编辑 SQL 代码
             elif user_choice == 'regen':
-                mid_notes = textarea("请输入补充提示（如果需要）：", type=TEXT)
+                mid_notes = textarea("请输入补充提示（如果需要）：", type=TEXT, value=mid_notes)
                 with put_loading():
                     sql_code = get_sql_code(ask_request.question + mid_notes, llm)
                 continue
@@ -125,19 +125,21 @@ def main():
 
         ask_request.question = ask_request.question + graph_type
 
-        graph_prompt = get_ask_echart_block_prompt(ask_request)
+        draw_graph_prompt = get_ask_echart_block_prompt(ask_request)
 
         with put_loading():
-            ans_code = get_py_code(ans_pd, ask_request.question + graph_prompt, llm)
+            ans_code = get_py_code(ans_pd, ask_request.question + draw_graph_prompt, llm)
 
         while 1:
             ans_code = textarea("请编辑代码：", value=ans_code, rows=10, code=True)
             put_code(ans_code, language="python")
+            mid_notes = ""
             try:
                 result = execute_code(ans_code, ans_pd)
                 put_html(result)
             except Exception as e:
                 put_text(f"代码执行失败，错误信息：{str(e)}")
+                mid_notes = "Code:\n```python\n" + ans_code + "\n```\nError: " + str(e)
             user_choice = actions("请选择：", [
                 {'label': '继续', 'value': 'accept', "color": "success"},
                 {'label': '重新编辑 Python', 'value': 'retry'},
@@ -148,9 +150,9 @@ def main():
             elif user_choice == 'retry':
                 continue
             elif user_choice == 'regen':
-                mid_notes = textarea("请输入补充提示（如果需要）：", type=TEXT)
+                mid_notes = textarea("请输入补充提示（如果需要）：", type=TEXT, value=mid_notes)
                 with put_loading():
-                    ans_code = get_py_code(ans_pd, ask_request.question + graph_prompt + mid_notes, llm)
+                    ans_code = get_py_code(ans_pd, ask_request.question + draw_graph_prompt + mid_notes, llm)
                 continue
 
 
