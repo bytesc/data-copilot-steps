@@ -7,8 +7,8 @@ ai:
 
 llm:
   model_provider: openai #qwen #openai
-  model: deepseek-chat
-  url: "https://api.deepseek.com/v1/"
+  model: qwen-max
+  url: "https://dashscope.aliyuncs.com/compatible-mode/v1"
 
 # qwen1.5-72b-chat   qwen1.5-110b-chat
 # qwen-turbo  qwen-plus   qwen-max   qwen-long
@@ -17,5 +17,10 @@ llm:
 # glm-4
 # https://open.bigmodel.cn
 
+# deepseek-chat
+# https://api.deepseek.com/v1/
+
+# deepseek-v3
+# https://dashscope.aliyuncs.com/compatible-mode/v1
 
 server_port: 8037
