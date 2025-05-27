@@ -9,7 +9,8 @@ Pywebio interactive front-end web page, no need for OpenAI API, 100% pure Python
 
 ### Related Projects
 - [Natural Language Database Query System (RAG) based on Large Language Models (LLM) and Concurrent Prediction Models](https://github.com/bytesc/data-copilot-v2)
-[Personal Website: www.bytesc.top](http://www.bytesc.top)
+
+🚩[Personal Website: www.bytesc.top](http://www.bytesc.top)
 🔔 If you have any questions about the project, please feel free to raise an `issue` in this project. I usually reply within 24 hours.
 
 ## Function Overview
