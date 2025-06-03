@@ -1,8 +1,9 @@
 
-# Data-Copilot Steps
+# Data-Copilot-Steps
 ✨ **An *Interpretable* Natural Language Database Query System for Large Language Models (LLM)**
 Query databases using natural language, intelligently parse database structures with large language models, perform structured multi-table queries and statistical calculations on data, and intelligently generate various types of charts based on query results. The entire generation process is open, modifiable, and interpretable, achieving reliable natural language data analysis.
 Pywebio interactive front-end web page, no need for OpenAI API, 100% pure Python code.
+
 🚩 [简体中文](./README.md)
 
 [📺 Project Online Demonstration Link](http://www.bytesc.top:8037/)
